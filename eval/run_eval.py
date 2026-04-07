@@ -44,8 +44,8 @@ def main() -> None:
         pretrained_dim=pretrained_dim,
         qwen_encoder=qwen,
     )
-    ckpt = torch.load(args.checkpoint, map_location=device)
-    model.load_state_dict(ckpt["model_state"])
+    ckpt = torch.load(args.checkpoint, map_location=device, weights_only=True)
+    model.load_state_dict(ckpt["model_state"], strict=False)
     model.to(device)
 
     data_path = Path(args.data)

@@ -106,10 +106,7 @@ class Evaluator:
                 "intent_confidence": float(intent_probs[intent_id]),
                 "intent_probs": intent_probs.cpu().tolist(),
                 # gold entity spans from featurizer BIO conversion
-                "gt_tag_ids": [
-                    self.featurizer.tag2id.get(t, 0)
-                    for t in self.featurizer.transform(ex)["entity_tags"][1:]
-                ],
+                "gt_tag_ids": self.featurizer.transform(ex)["entity_tags"][1:],
                 "pred_tag_ids": tag_ids,
                 "words": words,
             })

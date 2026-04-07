@@ -75,11 +75,15 @@ def collate_fn(batch: List[dict]) -> dict:
         intent_list.append(item["intent_label"])
 
         if has_pretrained:
-            emb = item["pretrained"]           # (seq_len, D)
+            emb = item["pretrained"]           # (max_words_global, D) — word-only, no [CLS]
             embed_dim = emb.shape[1]
+            num_words = seq_len - 1            # actual words (seq_len includes [CLS])
+            word_embs = emb[:num_words]        # trim global padding → (num_words, D)
+            cls_zeros = np.zeros((1, embed_dim), dtype=np.float32)
+            emb_with_cls = np.concatenate([cls_zeros, word_embs], axis=0)  # (seq_len, D)
             emb_padded = np.concatenate(
-                [emb, np.zeros((pad, embed_dim), dtype=np.float32)], axis=0
-            )
+                [emb_with_cls, np.zeros((pad, embed_dim), dtype=np.float32)], axis=0
+            )  # (max_len, D)
             pretrained_list.append(emb_padded)
 
     result = {
@@ -91,7 +95,10 @@ def collate_fn(batch: List[dict]) -> dict:
         "entity_tags": torch.from_numpy(np.stack(tag_list)),        # (B, L)
         "intent_labels": torch.tensor(intent_list, dtype=torch.long),  # (B,)
         "pretrained": (
-            torch.from_numpy(np.stack(pretrained_list))
+            torch.from_numpy(np.stack([
+                np.pad(e, ((0, max(x.shape[0] for x in pretrained_list) - e.shape[0]), (0, 0)))
+                for e in pretrained_list
+            ]))
             if pretrained_list
             else None
         ),

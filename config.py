@@ -20,7 +20,7 @@ class PretrainedEmbeddingConfig:
         "and named entities can be extracted."
     )
     # LoRA – only applied when use_lora=True
-    use_lora: bool = False
+    use_lora: bool = True
     lora_r: int = 8
     lora_alpha: int = 16
     lora_dropout: float = 0.05
@@ -29,7 +29,7 @@ class PretrainedEmbeddingConfig:
     )
     freeze_base: bool = True
     # Pre-compute & cache Qwen embeddings before training (only when use_lora=False)
-    precompute_embeddings: bool = True
+    precompute_embeddings: bool = False
     max_token_length: int = 256
 
 

@@ -86,12 +86,12 @@ class CRF(nn.Module):
             # (B, C, 1) + (1, C, C) → (B, C, C), then logsumexp over prev tag
             next_score = score.unsqueeze(2) + self.transitions.unsqueeze(0)
             next_score = torch.logsumexp(next_score, dim=1)              # (B, C)
-            next_score += emissions[:, t]
+            next_score = next_score + emissions[:, t]
 
             # Keep old score for padding positions
             score = torch.where(mask[:, t].unsqueeze(1), next_score, score)
 
-        score += self.end_transitions.unsqueeze(0)
+        score = score + self.end_transitions.unsqueeze(0)
         return torch.logsumexp(score, dim=1)                             # (B,)
 
     def _viterbi(self, emissions, mask):

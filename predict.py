@@ -13,7 +13,7 @@ def load_model(checkpoint_path: str, config_path: str | None = None):
     from models import DIETModel, QwenEncoder
 
     # Load checkpoint
-    ckpt = torch.load(checkpoint_path, map_location="cpu")
+    ckpt = torch.load(checkpoint_path, map_location="cpu",weights_only=True)
 
     # Load featurizer from the same directory as the checkpoint
     feat_path = Path(checkpoint_path).parent / "featurizer.pkl"
@@ -39,7 +39,7 @@ def load_model(checkpoint_path: str, config_path: str | None = None):
         pretrained_dim=pretrained_dim,
         qwen_encoder=qwen,    # keep encoder for inference
     )
-    model.load_state_dict(ckpt["model_state"])
+    model.load_state_dict(ckpt["model_state"], strict=False)
     model.eval()
 
     return model, featurizer, config, device

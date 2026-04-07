@@ -9,9 +9,9 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 
-from ..config import DIETConfig
-from ..data.featurizer import Featurizer
-from ..models.diet import DIETModel
+from config import DIETConfig
+from data.featurizer import Featurizer
+from models.diet import DIETModel
 
 
 def _intent_accuracy(logits: torch.Tensor, labels: torch.Tensor) -> float:
