@@ -7,7 +7,7 @@ class SparseFeatureConfig:
     analyzer: str = "char_wb"    # "char" | "word" | "char_wb"
     min_ngram: int = 1
     max_ngram: int = 4
-    max_features: int = 1024
+    max_features: int = 10000
     binary: bool = False
 
 
